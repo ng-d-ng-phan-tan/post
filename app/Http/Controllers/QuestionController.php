@@ -10,7 +10,7 @@ class QuestionController extends Controller
     //Base CRUD
     public function index()
     {
-        $question = Question::whereNull('deleted_at')->simplePaginate (20);
+        $question = Question::whereNull('deleted_at')->simplePaginate(20);
 
         return response()->json($question);
     }
@@ -54,5 +54,17 @@ class QuestionController extends Controller
         }
 
         return response()->json(null, 204);
+    }
+
+    public function approve(Request $request, $id)
+    {
+        //check role
+        //request: email & password
+        $this->sendHttpRequest(env('SERVICE_AUTH_URL') . '/checkUserInRole', 'post', $request);
+        $question = $question = Question::where('_id', '=', $id)->first();
+        $question->is_approved = true;
+        $question->save();
+
+        return response()->json($question);
     }
 }

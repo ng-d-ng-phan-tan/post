@@ -22,6 +22,8 @@ class Question extends Eloquent
         'num_of_reported' => 0,
     ];
     protected $fillable = [
+        'title',
+        'body',
         'num_of_likes',
         'num_of_dislikes',
         'num_of_answers',
@@ -30,6 +32,9 @@ class Question extends Eloquent
         'isReported',
         'num_of_reported',
         'user_approved_id',
+        'interaction',
+        'categories',
+        'created_by',
         'approved_at',
         'created_at',
         'updated_at'

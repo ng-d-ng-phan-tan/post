@@ -21,7 +21,6 @@ class TagController extends Controller
             }
         }
 
-
         $data = $tag->whereNull('deleted_at')->simplePaginate(20);
         return response()->json($data);
     }
