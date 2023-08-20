@@ -32,7 +32,7 @@ Route::post('/questions', [QuestionController::class, 'store']);
 Route::get('/questions/{id}', [QuestionController::class, 'show']);
 Route::put('/questions/{id}', [QuestionController::class, 'update']);
 Route::delete('/questions/{id}', [QuestionController::class, 'destroy']);
-Route::get('/questions/restore/{id}', [QuestionController::class, 'restore']);
+
 
 Route::get('/answers', [AnswerController::class, 'index']);
 Route::post('/answers', [AnswerController::class, 'store']);
@@ -49,7 +49,13 @@ Route::prefix('admin')->group(function () {
     Route::put('/questions/{id}', [QuestionController::class, 'update']);
     Route::delete('/questions/{id}', [QuestionController::class, 'destroy']);
     Route::get('/questions/restore/{id}', [QuestionController::class, 'restore']);
+    Route::get('/questions/approve/{id}', [QuestionController::class, 'approve']);
 
     //
-
+    Route::get('/tags', [TagController::class, 'index']);
+    Route::post('/tags', [TagController::class, 'store']);
+    Route::get('/tags/{id}', [TagController::class, 'show']);
+    Route::put('/tags/{id}', [TagController::class, 'update']);
+    Route::delete('/tags/{id}', [TagController::class, 'destroy']);
+    Route::get('/tags/restore/{id}', [TagController::class, 'restore']);
 });
