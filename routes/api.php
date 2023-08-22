@@ -32,6 +32,7 @@ Route::post('/questions', [QuestionController::class, 'store']);
 Route::get('/questions/{id}', [QuestionController::class, 'show']);
 Route::put('/questions/{id}', [QuestionController::class, 'update']);
 Route::delete('/questions/{id}', [QuestionController::class, 'destroy']);
+Route::post('/questions/vote/{id}', [QuestionController::class, 'vote']);
 
 
 Route::get('/answers', [AnswerController::class, 'index']);

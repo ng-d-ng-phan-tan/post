@@ -16,7 +16,9 @@ class Controller extends BaseController
         $client = new Client();
         $response = null;
         if ($type == 'get') {
-            $response = $client->get($url);
+            $response = $client->get($url,  [
+                'json' => $data,
+            ]);
         } else {
             $response = $client->post($url, [
                 'json' => $data,

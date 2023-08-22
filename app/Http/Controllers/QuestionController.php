@@ -4,22 +4,35 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Question;
+use GuzzleHttp\Client;
 
 class QuestionController extends Controller
 {
     //Base CRUD
     public function index()
     {
-        $question = Question::whereNull('deleted_at')->simplePaginate(20);
+        $question = Question::whereNull('deleted_at')->orderBy('created_at', 'desc')->simplePaginate(20);
 
         return response()->json($question);
     }
 
     public function store(Request $request)
     {
-        $question = Question::create($request->all());
+        try {
+            $token = $request->header('Authorization');
+            $client = new Client();
+            $res = $client->request('GET', 'http://localhost:8001/api/checkUserInRole?role=admin', [
+                'headers' => ['Authorization', $token]
+            ]);
+            $status = $res->getStatusCode();
+            if ($status == 200) {
+                // $question = Question::create($request->all());
 
-        return response()->json($question, 201);
+                return response()->json($res->getBody(), 201);
+            }
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $e->getResponse()->getBody()->getContents();
+        }
     }
 
     public function show($id)
@@ -58,13 +71,19 @@ class QuestionController extends Controller
 
     public function approve(Request $request, $id)
     {
-        //check role
-        //request: email & password
-        $this->sendHttpRequest(env('SERVICE_AUTH_URL') . '/checkUserInRole', 'post', $request);
+        $is_approved = $request->input('is_approved');
         $question = $question = Question::where('_id', '=', $id)->first();
-        $question->is_approved = true;
+        $question->is_approved = $is_approved;
         $question->save();
 
+        return response()->json($question);
+    }
+
+    public function vote(Request $request, $id)
+    {
+        $type = $request->input('type');
+        $created_by = $request->input('created_by');
+        $question = Question::where('_id', '=', $id)->where('interaction.created_by', '=', $created_by)->update(['interaction.$[].type' => $type]);
         return response()->json($question);
     }
 }
