@@ -97,7 +97,13 @@ return [
             'driver' => 'mongodb',
             'dsn' => env('DB_URI', 'mongodb+srv://nnpsy19:udpt%402023@cluster0.3obsv4v.mongodb.net/post?retryWrites=true&w=majority'),
             'database' => 'post',
-        ]
+        ],
+        'elasticsearch' => [
+            'hosts' => [
+                'https://oMbvJYsWP4:c7CjNfwRXGiz2xDUt65dBg@hcmus-search-2433627861.us-east-1.bonsaisearch.net:443',
+            ],
+        ],
+        
     ],
 
     /*

@@ -5,9 +5,68 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Question;
 use App\Models\ResponseMsg;
+use Elasticsearch\ClientBuilder;
 
 class QuestionController extends Controller
 {
+    // Elasticsearch PHP client
+    protected $elasticsearch;
+    // Elastica client
+    protected $elastica;
+    // Elastica index
+    protected $elasticIndex;
+
+    public function __construct()
+    {
+        $this->elasticsearch = ClientBuilder::create()
+            ->setHosts(config('database.connections.elasticsearch.hosts'))
+            ->setBasicAuthentication('oMbvJYsWP4', 'c7CjNfwRXGiz2xDUt65dBg')
+            ->build();
+    }
+    public function searchPostByTitleOrBody(Request $request)
+    {
+        try {
+            if ($request->has('search')) {
+                $search = $request->input('search');
+            } else {
+                return response()->json([
+                    'message' => 'Please enter keyword'
+                ], 400);
+            }
+
+            $offset = $request->has('offset') ? max(0, intval($request->input('offset'))) : 0;
+            $limit = $request->has('limit') ? max(1, intval($request->input('limit'))) : 10;
+            $params = [
+                'index' => 'posts',
+                'body' => [
+                    'query' => [
+                        'multi_match' => [
+                            'query' => $search,
+                            'fields' => ['title', 'body']
+                        ]
+                    ]
+                ],
+                'from' => $offset,
+                'size' => $limit
+            ];
+            $response = $this->elasticsearch->search($params);
+            $hits = $response['hits']['hits'];
+            $posts = [];
+            foreach ($hits as $hit) {
+                $posts[] = $hit['_source'];
+            }
+            return response()->json([
+                'posts' => $posts,
+                'total' => $response['hits']['total']['value'],
+                'message' => 'Search successfully'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     //Base CRUD
     public function index()
     {

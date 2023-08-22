@@ -51,6 +51,7 @@ Route::prefix('admin')->group(function () {
     Route::delete('/questions/{id}', [QuestionController::class, 'destroy']);
     Route::get('/questions/restore/{id}', [QuestionController::class, 'restore']);
     Route::get('/questions/approve/{id}', [QuestionController::class, 'approve']);
+    Route::post('/questions/searchPostByTitleOrBody', [QuestionController::class, 'searchPostByTitleOrBody']);
 
     //
     Route::get('/tags', [TagController::class, 'index']);
