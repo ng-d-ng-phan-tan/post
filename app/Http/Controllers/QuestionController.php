@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Question;
-use GuzzleHttp\Client;
+use App\Models\ResponseMsg;
 
 class QuestionController extends Controller
 {
@@ -18,21 +18,9 @@ class QuestionController extends Controller
 
     public function store(Request $request)
     {
-        try {
-            $token = $request->header('Authorization');
-            $client = new Client();
-            $res = $client->request('GET', 'http://localhost:8001/api/checkUserInRole?role=admin', [
-                'headers' => ['Authorization', $token]
-            ]);
-            $status = $res->getStatusCode();
-            if ($status == 200) {
-                // $question = Question::create($request->all());
+        $question = Question::create($request->all());
 
-                return response()->json($res->getBody(), 201);
-            }
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            $e->getResponse()->getBody()->getContents();
-        }
+        return response()->json($question, 201);
     }
 
     public function show($id)
@@ -71,19 +59,62 @@ class QuestionController extends Controller
 
     public function approve(Request $request, $id)
     {
-        $is_approved = $request->input('is_approved');
-        $question = $question = Question::where('_id', '=', $id)->first();
-        $question->is_approved = $is_approved;
-        $question->save();
+        $user_approved_id = $request->input('user_approved_id');
+        $approved_at = $request->input('created_at');
+        Question::where('_id', '=', $id)->update(['is_approved' => true]);
+        Question::where('_id', '=', $id)->update(['user_approved_id' => $user_approved_id]);
+        Question::where('_id', '=', $id)->update(['approved_at' => $approved_at]);
 
-        return response()->json($question);
+        //Send mail to admin
+
+        return response()->json(new ResponseMsg(201, 'Approve sucessfully!', Question::where('_id', '=', $id)->first()));
     }
 
     public function vote(Request $request, $id)
     {
         $type = $request->input('type');
         $created_by = $request->input('created_by');
-        $question = Question::where('_id', '=', $id)->where('interaction.created_by', '=', $created_by)->update(['interaction.$[].type' => $type]);
-        return response()->json($question);
+        $created_at = $request->input('created_at');
+        $question = Question::where('_id', '=', $id)->where('interaction.created_by', '=', $created_by)->first();
+
+        if ($question) {
+            Question::where('_id', '=', $id)->where('interaction.created_by', '=', $created_by)->update(['interaction.$[].type' => $type]);
+            if ($type === '1') {
+                Question::where('_id', '=', $id)->update(['num_of_likes' => true]);
+            } else {
+                Question::where('_id', '=', $id)->update(['num_of_dislikes' => true]);
+            }
+        } else {
+            $newInteraction = [
+                'type' => $type,
+                'created_by' => $created_by,
+                'created_at' => $created_at
+            ];
+
+            Question::where('_id', '=', $id)->first()->push('interaction', $newInteraction);
+        }
+
+        return response()->json(new ResponseMsg(201, 'Interact sucessfully!', Question::where('_id', '=', $id)->first()));
+    }
+
+    public function report(Request $request, $id)
+    {
+        $content = $request->input('content');
+        $created_by = $request->input('created_by');
+        $created_at = $request->input('created_at');
+        $question = Question::where('_id', '=', $id)->where('reports.created_by', '=', $created_by)->first();
+        if ($question) {
+            return response()->json(new ResponseMsg(200, 'Report was sent to admin!', null));
+        } else {
+            $newReport = [
+                'content' => $content,
+                'created_by' => $created_by,
+                'created_at' => $created_at
+            ];
+            Question::where('_id', '=', $id)->first()->push('reports', $newReport);
+            Question::where('_id', '=', $id)->update(['is_reported' => true]);
+
+            return response()->json(new ResponseMsg(201, 'Report sucessfully!', Question::where('_id', '=', $id)->first()));
+        }
     }
 }

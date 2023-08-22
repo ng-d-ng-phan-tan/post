@@ -33,7 +33,7 @@ Route::get('/questions/{id}', [QuestionController::class, 'show']);
 Route::put('/questions/{id}', [QuestionController::class, 'update']);
 Route::delete('/questions/{id}', [QuestionController::class, 'destroy']);
 Route::post('/questions/vote/{id}', [QuestionController::class, 'vote']);
-
+Route::post('/questions/report/{id}', [QuestionController::class, 'report']);
 
 Route::get('/answers', [AnswerController::class, 'index']);
 Route::post('/answers', [AnswerController::class, 'store']);
