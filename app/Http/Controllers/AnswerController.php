@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Answer;
+use App\Models\Question;
+use App\Models\ResponseMsg;
 
 class AnswerController extends Controller
 {
     //Base CRUD
     public function index()
     {
-        $data = Answer::whereNull('deleted_at')->simplePaginate (20);
+        $data = Answer::whereNull('deleted_at')->simplePaginate(20);
         return response()->json($data);
     }
 
@@ -23,8 +25,9 @@ class AnswerController extends Controller
 
     public function show($id)
     {
-        $answer = Answer::where('_id', '=', $id)->first();
-        return response()->json($answer);
+        $question = Question::where('_id', '=', $id)->first();
+        $answer = Answer::where('question_id', '=', $question->_id)->get();
+        return response()->json(new ResponseMsg(200, 'Get Answers successfully!', $answer));
     }
 
     public function update(Request $request, $id)

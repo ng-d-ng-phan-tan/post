@@ -126,7 +126,7 @@ class QuestionController extends Controller
 
         //Send mail to admin
 
-        return response()->json(new ResponseMsg(201, 'Approve sucessfully!', Question::where('_id', '=', $id)->first()));
+        return response()->json(new ResponseMsg(201, 'Approve successfully!', Question::where('_id', '=', $id)->first()));
     }
 
     public function vote(Request $request, $id)
@@ -138,11 +138,6 @@ class QuestionController extends Controller
 
         if ($question) {
             Question::where('_id', '=', $id)->where('interaction.created_by', '=', $created_by)->update(['interaction.$[].type' => $type]);
-            if ($type === '1') {
-                Question::where('_id', '=', $id)->update(['num_of_likes' => true]);
-            } else {
-                Question::where('_id', '=', $id)->update(['num_of_dislikes' => true]);
-            }
         } else {
             $newInteraction = [
                 'type' => $type,
@@ -153,7 +148,7 @@ class QuestionController extends Controller
             Question::where('_id', '=', $id)->first()->push('interaction', $newInteraction);
         }
 
-        return response()->json(new ResponseMsg(201, 'Interact sucessfully!', Question::where('_id', '=', $id)->first()));
+        return response()->json(new ResponseMsg(201, 'Interact successfully!', Question::where('_id', '=', $id)->first()));
     }
 
     public function report(Request $request, $id)
@@ -173,7 +168,7 @@ class QuestionController extends Controller
             Question::where('_id', '=', $id)->first()->push('reports', $newReport);
             Question::where('_id', '=', $id)->update(['is_reported' => true]);
 
-            return response()->json(new ResponseMsg(201, 'Report sucessfully!', Question::where('_id', '=', $id)->first()));
+            return response()->json(new ResponseMsg(201, 'Report successfully!', Question::where('_id', '=', $id)->first()));
         }
     }
 
