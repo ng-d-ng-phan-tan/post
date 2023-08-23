@@ -10,7 +10,7 @@ class Question extends Eloquent
 {
     use HasUuids, SoftDeletes;
 
-    protected $dates = ['created_at', 'updated_at'];
+    protected $dates = ['approved_at', 'created_at', 'updated_at'];
     protected $collection = 'questions';
     protected $primaryKey = '_id';
     protected $attributes = [
@@ -20,6 +20,8 @@ class Question extends Eloquent
         'is_approved' => false,
         'isReported' => false,
         'num_of_reported' => 0,
+        'user_approved_id' => null,
+        'interaction' => null,
     ];
     protected $fillable = [
         'title',
