@@ -176,4 +176,10 @@ class QuestionController extends Controller
             return response()->json(new ResponseMsg(201, 'Report sucessfully!', Question::where('_id', '=', $id)->first()));
         }
     }
+
+    public function getCount()
+    {
+        $response = new ResponseMsg("200", "Count", Question::count());
+        return response()->json(($response));
+    }
 }

@@ -52,6 +52,7 @@ Route::prefix('admin')->group(function () {
     Route::get('/questions/restore/{id}', [QuestionController::class, 'restore']);
     Route::get('/questions/approve/{id}', [QuestionController::class, 'approve']);
     Route::post('/questions/searchPostByTitleOrBody', [QuestionController::class, 'searchPostByTitleOrBody']);
+    Route::post('/questions/getCount', [QuestionController::class, 'getCount']);
 
     //
     Route::get('/tags', [TagController::class, 'index']);
