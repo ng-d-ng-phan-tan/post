@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Question extends Eloquent
 {
-    use HasUuids, SoftDeletes;
+    use SoftDeletes;
 
     protected $dates = ['approved_at', 'created_at', 'updated_at'];
     protected $collection = 'questions';
@@ -21,7 +21,7 @@ class Question extends Eloquent
         'isReported' => false,
         'num_of_reported' => 0,
         'user_approved_id' => null,
-        'interaction' => null,
+        'interaction' => [],
     ];
     protected $fillable = [
         'title',

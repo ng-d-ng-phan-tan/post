@@ -79,7 +79,7 @@ class QuestionController extends Controller
     {
         $question = Question::create($request->all());
 
-        return response()->json($question, 201);
+        return response()->json(new ResponseMsg(201, 'Create question successfully!', $question));
     }
 
     public function show($id)
@@ -137,15 +137,42 @@ class QuestionController extends Controller
         $question = Question::where('_id', '=', $id)->where('interaction.created_by', '=', $created_by)->first();
 
         if ($question) {
+            //Re-vote
+            if ($question->interaction[0]["type"] != $type) {
+                if ($question->interaction[0]["type"] == '1') {
+                    $question->num_of_likes -= 1;
+                    $question->num_of_dislikes += 1;
+                }
+
+                if ($question->interaction[0]["type"] == '2') {
+                    $question->num_of_likes += 1;
+                    $question->num_of_dislikes -= 1;
+                }
+            }
+
             Question::where('_id', '=', $id)->where('interaction.created_by', '=', $created_by)->update(['interaction.$[].type' => $type]);
+            $question->save();
+            
         } else {
+            //New vote
             $newInteraction = [
                 'type' => $type,
                 'created_by' => $created_by,
                 'created_at' => $created_at
             ];
 
-            Question::where('_id', '=', $id)->first()->push('interaction', $newInteraction);
+            $question = Question::where('_id', '=', $id)->first();
+
+            if ($type == '1') {
+                $question->num_of_likes++;
+            }
+            if ($type == '2') {
+                $question->num_of_dislikes++;
+            }
+
+
+            //$question->push('interaction', $newInteraction);
+            $question->save();
         }
 
         return response()->json(new ResponseMsg(201, 'Interact successfully!', Question::where('_id', '=', $id)->first()));

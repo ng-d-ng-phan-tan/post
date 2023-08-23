@@ -19,6 +19,9 @@ class AnswerController extends Controller
     public function store(Request $request)
     {
         $answer = Answer::create($request->all());
+        $question = Question::where('_id', '=', $request->input('question_id'))->first();
+        $question->num_of_answers+=1;
+        $question->save();
 
         return response()->json($answer, 201);
     }
