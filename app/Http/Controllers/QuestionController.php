@@ -148,11 +148,19 @@ class QuestionController extends Controller
                     $question->num_of_likes += 1;
                     $question->num_of_dislikes -= 1;
                 }
+                Question::where('_id', '=', $id)->where('interaction.created_by', '=', $created_by)->update(['interaction.$[].type' => $type]);
+            } else {
+                if ($type == '1') {
+                    $question->num_of_likes -= 1;
+                }
+
+                if ($type == '2') {
+                    $question->num_of_dislikes -= 1;
+                }
+                Question::where('_id', '=', $id)->where('interaction.created_by', '=', $created_by)->pull('interaction', ['created_by' => $created_by]);
             }
 
-            Question::where('_id', '=', $id)->where('interaction.created_by', '=', $created_by)->update(['interaction.$[].type' => $type]);
             $question->save();
-            
         } else {
             //New vote
             $newInteraction = [
@@ -171,7 +179,7 @@ class QuestionController extends Controller
             }
 
 
-            //$question->push('interaction', $newInteraction);
+            $question->push('interaction', $newInteraction);
             $question->save();
         }
 
@@ -197,11 +205,5 @@ class QuestionController extends Controller
 
             return response()->json(new ResponseMsg(201, 'Report successfully!', Question::where('_id', '=', $id)->first()));
         }
-    }
-
-    public function getCount()
-    {
-        $response = new ResponseMsg("200", "Count", Question::count());
-        return response()->json(($response));
     }
 }
