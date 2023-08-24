@@ -20,7 +20,7 @@ class AnswerController extends Controller
     {
         $answer = Answer::create($request->all());
         $question = Question::where('_id', '=', $request->input('question_id'))->first();
-        $question->num_of_answers+=1;
+        $question->num_of_answers += 1;
         $question->save();
 
         return response()->json($answer, 201);
@@ -59,5 +59,16 @@ class AnswerController extends Controller
         }
 
         return response()->json(null, 204);
+    }
+
+    public function verify($id)
+    {
+        $answer = Answer::where('_id', '=', $id)->first();
+
+        $answer->is_verified = true;
+
+        $answer->save();
+
+        return  response()->json(new ResponseMsg(201, 'Verify successfully!', null));
     }
 }

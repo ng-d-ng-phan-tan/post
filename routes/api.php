@@ -41,6 +41,7 @@ Route::get('/answers/{id}', [AnswerController::class, 'show']);
 Route::put('/answers/{id}', [AnswerController::class, 'update']);
 Route::delete('/answers/{id}', [AnswerController::class, 'destroy']);
 Route::get('/answers/restore/{id}', [AnswerController::class, 'restore']);
+Route::post('/answers/verify/{id}', [AnswerController::class, 'verify']);
 
 Route::prefix('admin')->group(function () {
     //approve
