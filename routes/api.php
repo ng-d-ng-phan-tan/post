@@ -28,6 +28,7 @@ Route::delete('/tags/{id}', [TagController::class, 'destroy']);
 Route::get('/tags/restore/{id}', [TagController::class, 'restore']);
 
 Route::get('/questions/getTop3Question', [QuestionController::class, 'getTop3Question']);
+Route::get('/questions/search', [QuestionController::class, 'search']);
 Route::get('/questions', [QuestionController::class, 'index']);
 Route::post('/questions', [QuestionController::class, 'store']);
 Route::get('/questions/{id}', [QuestionController::class, 'show']);

@@ -246,4 +246,11 @@ class QuestionController extends Controller
             return response()->json(new ResponseMsg(201, 'Report successfully!', Question::where('_id', '=', $id)->first()));
         }
     }
+
+    public function search(Request $request)
+    {
+        $title = $request->input('title');
+        $questions = Question::orWhere('title', 'like', '%' . $title . '%')->get();
+        return response()->json(new ResponseMsg(201, 'Search successfully!', $questions));
+    }
 }
