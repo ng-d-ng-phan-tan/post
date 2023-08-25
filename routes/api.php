@@ -54,7 +54,7 @@ Route::prefix('admin')->group(function () {
     Route::put('/questions/{id}', [QuestionController::class, 'update']);
     Route::delete('/questions/{id}', [QuestionController::class, 'destroy']);
     Route::get('/questions/restore/{id}', [QuestionController::class, 'restore']);
-    Route::get('/questions/approve/{id}', [QuestionController::class, 'approve']);
+    Route::post('/questions/approve/{id}', [QuestionController::class, 'approve']);
     Route::post('/questions/searchPostByTitleOrBody', [QuestionController::class, 'searchPostByTitleOrBody']);
     Route::post('/questions/getCount', [QuestionController::class, 'getCount']);
 
