@@ -118,7 +118,7 @@ class QuestionController extends Controller
         for ($i = 0; $i < count($lstAdmin->data); $i++) {
             if($lstAdmin->data[$i]->email != null && $lstAdmin->data[$i]->device_token != null){
                 $res3 = $this->sendHttpRequest(env('SERVICE_NOTI_SENDMAIL_URL') . '/send-notification', 'post', [
-                    "user_id" => $lstAdmin->data[$i]->email,
+                    "user_id" => $lstAdmin->data[$i]->user_id,
                     "title" => $question->title,
                     "body" => $question->body,
                     "device_token" => $lstAdmin->data[$i]->device_token,
