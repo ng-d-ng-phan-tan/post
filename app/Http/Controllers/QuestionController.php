@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Question;
 use App\Models\ResponseMsg;
 use Elasticsearch\ClientBuilder;
+use Carbon\Carbon;
 
 class QuestionController extends Controller
 {
@@ -148,12 +149,12 @@ class QuestionController extends Controller
     public function approve(Request $request, $id)
     {
         $user_approved_id = $request->input('user_approved_id');
-        $approved_at = $request->input('created_at');
+        $approved_at = $request->input('created_at') ?? Carbon::now('Asia/Ho_Chi_Minh')->toDateTimeString();
         Question::where('_id', '=', $id)->update(['is_approved' => true]);
         Question::where('_id', '=', $id)->update(['user_approved_id' => $user_approved_id]);
         Question::where('_id', '=', $id)->update(['approved_at' => $approved_at]);
 
-        $question = Question::where('_id', '=', $id);
+        $question = Question::where('_id', '=', $id)->first();
         //Send mail to admin
         $resUserObj = $this->sendHttpRequest(env('SERVICE_USER_URL') . '/getUser', 'post', [
             "user_id" => $question->questioner_id,
