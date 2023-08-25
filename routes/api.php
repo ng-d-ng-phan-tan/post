@@ -27,6 +27,7 @@ Route::put('/tags/{id}', [TagController::class, 'update']);
 Route::delete('/tags/{id}', [TagController::class, 'destroy']);
 Route::get('/tags/restore/{id}', [TagController::class, 'restore']);
 
+Route::get('/questions/getTop3Question', [QuestionController::class, 'getTop3Question']);
 Route::get('/questions', [QuestionController::class, 'index']);
 Route::post('/questions', [QuestionController::class, 'store']);
 Route::get('/questions/{id}', [QuestionController::class, 'show']);
@@ -34,6 +35,8 @@ Route::put('/questions/{id}', [QuestionController::class, 'update']);
 Route::delete('/questions/{id}', [QuestionController::class, 'destroy']);
 Route::post('/questions/vote/{id}', [QuestionController::class, 'vote']);
 Route::post('/questions/report/{id}', [QuestionController::class, 'report']);
+
+
 
 Route::get('/answers', [AnswerController::class, 'index']);
 Route::post('/answers', [AnswerController::class, 'store']);

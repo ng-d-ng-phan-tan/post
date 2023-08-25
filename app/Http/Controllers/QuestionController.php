@@ -70,9 +70,16 @@ class QuestionController extends Controller
     //Base CRUD
     public function index()
     {
-        $question = Question::whereNull('deleted_at')->orderBy('created_at', 'desc')->simplePaginate(20);
+        $question = Question::whereNull('deleted_at')->where('is_approved', '=', true)->orderBy('created_at', 'desc')->simplePaginate(20);
 
         return response()->json($question);
+    }
+
+    public function getTop3Question()
+    {
+        $question = Question::where('is_approved', '=', true)->orderBy('num_of_answers', 'desc')->get();
+        
+        return response()->json(new ResponseMsg(200, 'Successfully!', $question));
     }
 
     public function store(Request $request)
