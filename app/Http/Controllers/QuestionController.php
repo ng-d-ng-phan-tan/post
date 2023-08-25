@@ -78,13 +78,34 @@ class QuestionController extends Controller
     public function getTop3Question()
     {
         $question = Question::where('is_approved', '=', true)->orderBy('num_of_answers', 'desc')->get();
-        
+
         return response()->json(new ResponseMsg(200, 'Successfully!', $question));
     }
 
     public function store(Request $request)
     {
         $question = Question::create($request->all());
+
+        $resUserObj = $this->sendHttpRequest(env('SERVICE_USER_URL') . '/getUser', 'post', [
+            "user_id" => $question->questioner_id,
+        ]);
+        $user = $resUserObj->data[0];
+
+        $responseLstEmailObj = $this->sendHttpRequest(env('SERVICE_USER_URL') . '/getLstReceiveEmail', 'post', null);
+
+        $lstEmail = $responseLstEmailObj->data;
+        $data = [
+            "to" => $lstEmail,
+            "subject" => "New Post",
+            "data" => [
+                "name" => $user->name,
+                "email" => $user->email,
+                "created_date" => $question->created_at,
+                "title" => $question->title,
+            ],
+            "template" => "notification_admin"
+        ];
+        $res2 = $this->sendHttpRequest(env('SERVICE_NOTI_SENDMAIL_URL') . '/send', 'post', $data);
 
         return response()->json(new ResponseMsg(201, 'Create question successfully!', $question));
     }
@@ -131,7 +152,19 @@ class QuestionController extends Controller
         Question::where('_id', '=', $id)->update(['user_approved_id' => $user_approved_id]);
         Question::where('_id', '=', $id)->update(['approved_at' => $approved_at]);
 
+        $question = Question::where('_id', '=', $id);
         //Send mail to admin
+        $resUserObj = $this->sendHttpRequest(env('SERVICE_USER_URL') . '/getUser', 'post', [
+            "user_id" => $question->questioner_id,
+        ]);
+        $user = $resUserObj->data[0];
+        $res2 = $this->sendHttpRequest(env('SERVICE_NOTI_SENDMAIL_URL') . '/send-notification', 'post', [
+
+            "user_id" => $user->user_id,
+            "title" => $question->title,
+            "body" => $question->body,
+            "device_token" => $user->device_token,
+        ]);
 
         return response()->json(new ResponseMsg(201, 'Approve successfully!', Question::where('_id', '=', $id)->first()));
     }
