@@ -35,7 +35,7 @@ class Question extends Eloquent
         'num_of_reported',
         'user_approved_id',
         'interaction',
-        'categories',
+        'tags',
         'created_by',
         'approved_at',
         'created_at',

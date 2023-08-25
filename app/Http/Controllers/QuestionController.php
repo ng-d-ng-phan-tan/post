@@ -77,10 +77,11 @@ class QuestionController extends Controller
 
     public function getTop3Question()
     {
-        $question = Question::where('is_approved', '=', true)->orderBy('num_of_answers', 'desc')->get();
+        $question = Question::whereNull('deleted_at')->where('is_approved', '=', true)->orderBy('num_of_answers', 'desc')->get();
 
         return response()->json(new ResponseMsg(200, 'Successfully!', $question));
     }
+
 
     public function store(Request $request)
     {
