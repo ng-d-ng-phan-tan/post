@@ -69,9 +69,13 @@ class QuestionController extends Controller
     }
 
     //Base CRUD
-    public function index()
+    public function index(Request $request)
     {
-        $question = Question::whereNull('deleted_at')->where('is_approved', '=', true)->orderBy('created_at', 'desc')->simplePaginate(20);
+        if ($request->filter == true) {
+            $question = Question::whereNull('deleted_at')->where('is_approved', '=', true)->where('num_of_answers', '=', 0)->orderBy('created_at', 'desc')->simplePaginate(20);
+        } else {
+            $question = Question::whereNull('deleted_at')->where('is_approved', '=', true)->orderBy('created_at', 'desc')->simplePaginate(20);
+        }
 
         return response()->json($question);
     }
