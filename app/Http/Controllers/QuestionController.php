@@ -259,4 +259,18 @@ class QuestionController extends Controller
         $response = new ResponseMsg("200", "Count", Question::count());
         return response()->json(($response));
     }
+
+    public function adminGetQuestion()
+    {
+        $question = Question::orderBy('created_at', 'desc')->simplePaginate(20);
+        // $question = Question::orderBy('created_at', 'desc') -> count();
+        return response()->json($question);
+    }
+
+    // public function test()
+    // {
+    //     $question = Question::where('is_approved', '=', false);
+    //     // $question = Question::orderBy('created_at', 'desc') -> count();
+    //     return response()->json($question);
+    // }
 }

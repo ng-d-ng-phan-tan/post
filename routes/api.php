@@ -49,7 +49,8 @@ Route::post('/answers/verify/{id}', [AnswerController::class, 'verify']);
 
 Route::prefix('admin')->group(function () {
     //approve
-    Route::get('/questions', [QuestionController::class, 'index']);
+    Route::get('/questions', [QuestionController::class, 'adminGetQuestion']);
+    // Route::get('/questions/test', [QuestionController::class, 'test']);
     Route::post('/questions', [QuestionController::class, 'store']);
     Route::get('/questions/{id}', [QuestionController::class, 'show']);
     Route::put('/questions/{id}', [QuestionController::class, 'update']);
