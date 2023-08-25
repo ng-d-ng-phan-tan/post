@@ -253,4 +253,10 @@ class QuestionController extends Controller
         $questions = Question::orWhere('title', 'like', '%' . $title . '%')->get();
         return response()->json(new ResponseMsg(201, 'Search successfully!', $questions));
     }
+
+    public function getCount()
+    {
+        $response = new ResponseMsg("200", "Count", Question::count());
+        return response()->json(($response));
+    }
 }
