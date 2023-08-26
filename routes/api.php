@@ -37,6 +37,7 @@ Route::delete('/questions/{id}', [QuestionController::class, 'destroy']);
 Route::post('/questions/vote/{id}', [QuestionController::class, 'vote']);
 Route::post('/questions/report/{id}', [QuestionController::class, 'report']);
 
+Route::post('/questions/test', [QuestionController::class, 'test']);
 
 
 Route::get('/answers', [AnswerController::class, 'index']);
