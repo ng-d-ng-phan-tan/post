@@ -69,9 +69,13 @@ class QuestionController extends Controller
     }
 
     //Base CRUD
-    public function index()
+    public function index(Request $request)
     {
-        $question = Question::whereNull('deleted_at')->where('is_approved', '=', true)->orderBy('created_at', 'desc')->simplePaginate(20);
+        if ($request->filter == true) {
+            $question = Question::whereNull('deleted_at')->where('is_approved', '=', true)->where('num_of_answers', '=', 0)->orderBy('created_at', 'desc')->simplePaginate(20);
+        } else {
+            $question = Question::whereNull('deleted_at')->where('is_approved', '=', true)->orderBy('created_at', 'desc')->simplePaginate(20);
+        }
 
         return response()->json($question);
     }
@@ -125,6 +129,19 @@ class QuestionController extends Controller
             "template" => "notification_admin"
         ];
         $res2 = $this->sendHttpRequest(env('SERVICE_NOTI_SENDMAIL_URL') . '/send', 'post', $data);
+
+        $lstAdmin = $this->sendHttpRequest(env('SERVICE_USER_URL') . '/getLstAdmin', 'post', null);
+
+        for ($i = 0; $i < count($lstAdmin->data); $i++) {
+            if($lstAdmin->data[$i]->email != null && $lstAdmin->data[$i]->device_token != null){
+                $res3 = $this->sendHttpRequest(env('SERVICE_NOTI_SENDMAIL_URL') . '/send-notification', 'post', [
+                    "user_id" => $lstAdmin->data[$i]->user_id,
+                    "title" => $question->title,
+                    "body" => $question->body,
+                    "device_token" => $lstAdmin->data[$i]->device_token,
+                ]);
+            }
+        }
 
         return response()->json(new ResponseMsg(201, 'Create question successfully!', $question));
     }
@@ -185,7 +202,7 @@ class QuestionController extends Controller
             "device_token" => $user->device_token,
         ]);
 
-        return response()->json(new ResponseMsg(201, 'Approve successfully!', Question::where('_id', '=', $id)->first()));
+        return response()->json(new ResponseMsg(201, 'Approve successfully!', $user->user_id));
     }
 
     public function vote(Request $request, $id)
