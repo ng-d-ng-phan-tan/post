@@ -87,24 +87,24 @@ class QuestionController extends Controller
         return response()->json(new ResponseMsg(200, 'Successfully!', $question));
     }
 
-    public function test(Request $request)
-    {
-        $question = Question::where('_id', '=', $request->input('id'))->first();
-        $resUserObj = $this->sendHttpRequest(env('SERVICE_USER_URL') . '/getUser', 'post', [
-            "user_id" => $question->questioner_id,
-        ]);
-        $user = $resUserObj->data[0];
-        $res2 = $this->sendHttpRequest(env('SERVICE_NOTI_SENDMAIL_URL') . '/send-notification', 'post', [
+    // public function test(Request $request)
+    // {
+    //     $question = Question::where('_id', '=', $request->input('id'))->first();
+    //     $resUserObj = $this->sendHttpRequest(env('SERVICE_USER_URL') . '/getUser', 'post', [
+    //         "user_id" => $question->questioner_id,
+    //     ]);
+    //     $user = $resUserObj->data[0];
+    //     $res2 = $this->sendHttpRequest(env('SERVICE_NOTI_SENDMAIL_URL') . '/send-notification', 'post', [
 
-            "user_id" => $user->user_id,
-            "title" => $question->title,
-            "body" => $question->body,
-            "device_token" => $user->device_token,
-        ]);
+    //         "user_id" => $user->user_id,
+    //         "title" => $question->title,
+    //         "body" => $question->body,
+    //         "device_token" => $user->device_token,
+    //     ]);
 
 
-        return response()->json(new ResponseMsg(201, 'Create question successfully!', ['res2' => $res2, 'user' => $user, 'question' => $question]));
-    }
+    //     return response()->json(new ResponseMsg(201, 'Create question successfully!', ['res2' => $res2, 'user' => $user, 'question' => $question]));
+    // }
     public function store(Request $request)
     {
         $question = Question::create($request->all());
